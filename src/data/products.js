@@ -18,6 +18,7 @@ const products = [
     originalPrice: null,
     stock: 212,
     isInCart: true,
+    createdAt: "2024-05-01T12:00:00Z",
   },
   {
     id: 2,
@@ -28,6 +29,7 @@ const products = [
     originalPrice: null,
     stock: 320,
     isInCart: false,
+    createdAt: "2024-05-03T12:00:00Z",
   },
   {
     id: 3,
@@ -38,6 +40,7 @@ const products = [
     originalPrice: 160,
     stock: 420,
     isInCart: false,
+    createdAt: "2024-05-04T12:00:00Z",
   },
   {
     id: 4,
@@ -48,6 +51,7 @@ const products = [
     originalPrice: 260,
     stock: 20,
     isInCart: false,
+    createdAt: "2024-05-02T12:00:00Z",
   },
   {
     id: 5,
@@ -58,6 +62,7 @@ const products = [
     originalPrice: null,
     stock: 20,
     isInCart: false,
+    createdAt: "2024-05-06T12:00:00Z",
   },
   {
     id: 6,
@@ -68,6 +73,7 @@ const products = [
     originalPrice: 160,
     stock: 20,
     isInCart: false,
+    createdAt: "2024-05-05T12:00:00Z",
   },
   {
     id: 7,
@@ -78,6 +84,7 @@ const products = [
     originalPrice: 232,
     stock: 20,
     isInCart: false,
+    createdAt: "2024-05-07T12:00:00Z",
   },
   {
     id: 8,
@@ -88,6 +95,7 @@ const products = [
     originalPrice: null,
     stock: 20,
     isInCart: false,
+    createdAt: "2024-05-08T12:00:00Z",
   },
   {
     id: 9,
@@ -98,6 +106,7 @@ const products = [
     originalPrice: null,
     stock: 10,
     isInCart: false,
+    createdAt: "2024-05-09T12:00:00Z",
   },
 ];
 

@@ -1,10 +1,16 @@
-import React, { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
+import "./index.css";
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+import { ShopProvider } from "./context/ShopContext"; // ✅ import your provider
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <ShopProvider>
+      {" "}
+      {/* ✅ Wrap App here */}
+      <App />
+    </ShopProvider>
+  </React.StrictMode>,
 );

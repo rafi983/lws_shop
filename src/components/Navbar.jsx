@@ -1,6 +1,14 @@
 import React from "react";
+import { useShop } from "../context/ShopContext.jsx";
 
 const Navbar = () => {
+  const { state, dispatch } = useShop();
+  const { searchQuery } = state.filter;
+
+  const handleSearch = (e) => {
+    dispatch({ type: "UPDATE_SEARCH", payload: e.target.value });
+  };
+
   return (
     <header className="border-b border-gray-200 py-4 px-4 md:px-8">
       <div className="container mx-auto flex items-center justify-between">
@@ -25,12 +33,13 @@ const Navbar = () => {
           </a>
         </nav>
 
-        {/* Search & Icons */}
+        {/* Search + Icons */}
         <div className="flex items-center space-x-4">
-          {/* Search bar */}
           <div className="relative hidden md:block w-64">
             <input
               type="text"
+              value={searchQuery}
+              onChange={handleSearch}
               placeholder="Search for products..."
               className="w-full bg-gray-100 rounded-full py-2 px-4 text-sm"
             />

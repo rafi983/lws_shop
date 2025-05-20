@@ -1,6 +1,7 @@
 import React from "react";
 import TopBanner from "./components/TopBanner";
 import Navbar from "./components/Navbar";
+import MainContent from "./components/MainContent.jsx";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <div className="bg-white font-satoshi">
         <TopBanner />
         <Navbar />
+        <MainContent />
       </div>
     </>
   );

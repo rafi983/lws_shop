@@ -1,8 +1,8 @@
 import React from "react";
-import { useShop } from "../context/ShopContext.jsx";
+import { useShop } from "../context/ShopContext";
 
 const CartItem = ({ item }) => {
-  const { dispatch } = useShop();
+  const { state, dispatch } = useShop();
 
   const increment = () => {
     dispatch({ type: "INCREMENT_QUANTITY", payload: item.id });
@@ -15,6 +15,9 @@ const CartItem = ({ item }) => {
   const remove = () => {
     dispatch({ type: "REMOVE_FROM_CART", payload: item.id });
   };
+
+  // Get live stock info for this item from global product state
+  const product = state.products.find((p) => p.id === item.id);
 
   return (
     <div className="flex items-start space-x-4 pb-4 border-b border-gray-200 mb-4">
@@ -42,15 +45,16 @@ const CartItem = ({ item }) => {
           <div className="flex items-center space-x-2">
             <button
               onClick={decrement}
-              className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center"
+              className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={item.quantity <= 1}
             >
               −
             </button>
             <span className="text-sm">{item.quantity}</span>
             <button
               onClick={increment}
-              className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center"
-              disabled={item.quantity >= item.stock}
+              className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={product?.stock === 0}
             >
               +
             </button>

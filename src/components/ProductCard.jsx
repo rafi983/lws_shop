@@ -1,12 +1,17 @@
 import React from "react";
-import { useShop } from "../context/ShopContext.jsx";
+import { useShop } from "../context/ShopContext";
 
 const ProductCard = ({ product }) => {
   const { state, dispatch } = useShop();
-  const isInCart = state.cart.some((item) => item.id === product.id);
+
+  const cartItem = state.cart.find((item) => item.id === product.id);
+  const isInCart = !!cartItem;
+  const isOutOfStock = product.stock === 0;
+  const showRemove = isInCart && !isOutOfStock;
+  const showOutOfStock = isInCart && isOutOfStock;
 
   const handleAddToCart = () => {
-    if (product.stock > 0 && !isInCart) {
+    if (!isInCart && product.stock > 0) {
       dispatch({ type: "ADD_TO_CART", payload: product });
     }
   };
@@ -59,14 +64,25 @@ const ProductCard = ({ product }) => {
             </p>
           )}
         </div>
+
         <button
           className={`w-full mt-2 ${
-            isInCart ? "bg-red-800" : "bg-gray-800"
+            showRemove ? "bg-red-800" : "bg-gray-800"
           } py-1 text-gray-100 rounded flex items-center justify-center transition-all active:translate-y-1 active:bg-gray-900 disabled:bg-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed`}
-          onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
-          disabled={!isInCart && product.stock === 0}
+          onClick={
+            showRemove
+              ? handleRemoveFromCart
+              : showOutOfStock
+                ? undefined
+                : handleAddToCart
+          }
+          disabled={isOutOfStock}
         >
-          {isInCart ? "Remove from Cart" : "Add to Cart"}
+          {showOutOfStock
+            ? "Out of Stock"
+            : showRemove
+              ? "Remove from Cart"
+              : "Add to Cart"}
         </button>
       </div>
     </div>

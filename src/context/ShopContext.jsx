@@ -3,9 +3,22 @@ import productsData from "../data/products";
 
 const ShopContext = createContext();
 
+const loadFromStorage = (key, fallback) => {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const saveToStorage = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
+
 const initialState = {
-  products: productsData,
-  cart: [],
+  products: loadFromStorage("products", productsData),
+  cart: loadFromStorage("cart", []),
   filter: {
     sortBy: "",
     searchQuery: "",
@@ -16,53 +29,42 @@ const shopReducer = (state, action) => {
   switch (action.type) {
     case "ADD_TO_CART": {
       const product = action.payload;
-
-      if (state.cart.find((item) => item.id === product.id)) return state;
-
+      const updatedCart = [...state.cart, { ...product, quantity: 1 }];
       const updatedProducts = state.products.map((p) =>
         p.id === product.id ? { ...p, stock: p.stock - 1 } : p,
       );
-
-      return {
-        ...state,
-        cart: [...state.cart, { ...product, quantity: 1 }],
-        products: updatedProducts,
-      };
+      saveToStorage("cart", updatedCart);
+      saveToStorage("products", updatedProducts);
+      return { ...state, cart: updatedCart, products: updatedProducts };
     }
 
     case "REMOVE_FROM_CART": {
       const productId = action.payload;
-
-      const removedItem = state.cart.find((item) => item.id === productId);
-      if (!removedItem) return state;
+      const cartItem = state.cart.find((item) => item.id === productId);
+      if (!cartItem) return state;
 
       const updatedProducts = state.products.map((p) =>
-        p.id === productId
-          ? { ...p, stock: p.stock + removedItem.quantity }
-          : p,
+        p.id === productId ? { ...p, stock: p.stock + cartItem.quantity } : p,
       );
+      const updatedCart = state.cart.filter((item) => item.id !== productId);
 
-      return {
-        ...state,
-        cart: state.cart.filter((item) => item.id !== productId),
-        products: updatedProducts,
-      };
+      saveToStorage("cart", updatedCart);
+      saveToStorage("products", updatedProducts);
+
+      return { ...state, cart: updatedCart, products: updatedProducts };
     }
 
     case "INCREMENT_QUANTITY": {
       const productId = action.payload;
-      const product = state.products.find((p) => p.id === productId);
-      const cartItem = state.cart.find((item) => item.id === productId);
-
-      if (!product || product.stock === 0 || !cartItem) return state;
-
       const updatedCart = state.cart.map((item) =>
         item.id === productId ? { ...item, quantity: item.quantity + 1 } : item,
       );
-
       const updatedProducts = state.products.map((p) =>
         p.id === productId ? { ...p, stock: p.stock - 1 } : p,
       );
+
+      saveToStorage("cart", updatedCart);
+      saveToStorage("products", updatedProducts);
 
       return { ...state, cart: updatedCart, products: updatedProducts };
     }
@@ -70,48 +72,31 @@ const shopReducer = (state, action) => {
     case "DECREMENT_QUANTITY": {
       const productId = action.payload;
       const cartItem = state.cart.find((item) => item.id === productId);
-      if (!cartItem) return state;
+      if (!cartItem || cartItem.quantity <= 1) return state;
 
-      // If quantity is 1 → remove from cart
-      if (cartItem.quantity === 1) {
-        const updatedProducts = state.products.map((p) =>
-          p.id === productId ? { ...p, stock: p.stock + 1 } : p,
-        );
-
-        return {
-          ...state,
-          cart: state.cart.filter((item) => item.id !== productId),
-          products: updatedProducts,
-        };
-      }
-
-      // Else just decrement quantity
       const updatedCart = state.cart.map((item) =>
         item.id === productId ? { ...item, quantity: item.quantity - 1 } : item,
       );
-
       const updatedProducts = state.products.map((p) =>
         p.id === productId ? { ...p, stock: p.stock + 1 } : p,
       );
 
-      return {
-        ...state,
-        cart: updatedCart,
-        products: updatedProducts,
-      };
+      saveToStorage("cart", updatedCart);
+      saveToStorage("products", updatedProducts);
+
+      return { ...state, cart: updatedCart, products: updatedProducts };
     }
 
-    case "UPDATE_SORT":
-      return {
-        ...state,
-        filter: { ...state.filter, sortBy: action.payload },
-      };
+    case "UPDATE_SORT": {
+      return { ...state, filter: { ...state.filter, sortBy: action.payload } };
+    }
 
-    case "UPDATE_SEARCH":
+    case "UPDATE_SEARCH": {
       return {
         ...state,
         filter: { ...state.filter, searchQuery: action.payload },
       };
+    }
 
     default:
       return state;
